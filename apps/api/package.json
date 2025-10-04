@@ -1,0 +1,36 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsup",
+    "start": "ts-node dist/index.js",
+    "dev": "nodemon",
+    "lint": "eslint src/ --max-warnings 0"
+  },
+  "tsup": {
+    "entry": [
+      "src/index.ts"
+    ],
+    "splitting": false,
+    "sourcemap": true,
+    "clean": true
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "nodemon": "^3.1.10",
+    "tsup": "^8.5.0"
+  },
+  "dependencies": {
+    "@types/express": "^5.0.3",
+    "@workspace/db": "workspace:*",
+    "@workspace/eslint-config": "workspace:*",
+    "@workspace/typescript-config": "workspace:*",
+    "express": "^5.1.0",
+    "ts-node": "^10.9.2"
+  }
+}

@@ -1,11 +1,12 @@
 {
-  "name": "shadcn-ui-monorepo",
+  "name": "togglr-monorepo",
   "version": "0.0.1",
   "private": true,
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
+    "start": "turbo start",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
