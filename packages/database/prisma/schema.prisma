@@ -20,4 +20,68 @@ model User {
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  companyId String
+
+  ownerOf  Company? @relation("CompanyOwner")
+  memberOf Company  @relation("CompanyMembers", fields: [companyId], references: [id])
 }
+
+model Company {
+  id       String  @id @default(uuid())
+  name     String
+  verified Boolean
+  ownerId  String  @unique
+
+  projects Project[]
+  Members  User[]    @relation("CompanyMembers")
+  Owner    User      @relation("CompanyOwner", fields: [ownerId], references: [id])
+}
+
+model Project {
+  id        String @id @default(uuid())
+  name      String
+  companyId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  featureFlags FeatureFlag[]
+
+  Company Company @relation(fields: [companyId], references: [id])
+}
+
+model FeatureFlag {
+  id      String  @id @default(uuid())
+  key     String  @unique
+  enabled Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  projectId String?
+
+  Project Project? @relation(fields: [projectId], references: [id])
+}
+
+// Uncomment the following model and add other necessary fields when implementing subscriptions
+
+// model Subscription {
+//   id            String   @id @default(uuid())
+//   stripeId      String   @unique
+//   customerId    String   @unique
+// }
+
+// model SubscriptionPlan {
+//   id          String   @id @default(uuid())
+//   name        String
+//   price       Float
+//   description String
+// }
+
+// model SubscriptionUsage {
+//   id              String   @id @default(uuid())
+//   subscriptionId  String
+//   maxUsage        Int
+//   usageCount      Int      @default(0)
+// }

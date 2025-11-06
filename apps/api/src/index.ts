@@ -9,7 +9,6 @@ app.get("/", (req : Request, res : Response) => {
 });
 
 app.post("/signup", async (req : Request, res : Response) => {
-  console.log("here")
   const { username, password } = req.body;
   const user = await prisma.user.create({
     data: {
