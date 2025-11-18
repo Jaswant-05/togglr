@@ -1,10 +1,15 @@
 import Apple from "next-auth/providers/apple";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
-import prisma from "@workspace/db/client"
+import prisma from "@workspace/db/client";
+import { userSignInSchema } from "@workspace/types/types";
+import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcryptjs";
+import { NextAuthConfig } from "next-auth";
 
-export const config = {
+
+export const config: NextAuthConfig = {
+  adapter: PrismaAdapter(prisma),
   providers: [
     Credentials({
       credentials : {
@@ -12,17 +17,18 @@ export const config = {
         password: { label: "Password", type: "password" }
       },
       authorize: async (credentials) => {
-        //Add Zod validation later
-        const username = credentials?.username as string
-        const password = credentials?.password as string
+        const { data, error} = userSignInSchema.safeParse({
+          email : credentials.username,
+          password : credentials.password
+        })
 
-        if (!username || !password) {
-          throw new Error("Missing Credentials");
+        if(!data || error){
+          throw new Error(error.message)
         }
-        
+
         const user = await prisma.user.findFirst({
           where: {
-            email: username
+            email: data.email
           }
         });
         
@@ -30,7 +36,7 @@ export const config = {
           return null;
         }
 
-        const isMatch = await bcrypt.compare(password, user.password);
+        const isMatch = await bcrypt.compare(data.password, user.password);
         if (!isMatch) {
           throw new Error("Invalid username or password");
         }
@@ -39,5 +45,16 @@ export const config = {
     }),
     Google,
     Apple
-  ]
+  ],
+  callbacks:{
+    session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id as string;
+      }
+      return session;
+    },
+  },
+  // pages: {
+  //   signIn : "/login"
+  // }
 };

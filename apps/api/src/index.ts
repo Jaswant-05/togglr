@@ -1,22 +1,16 @@
-import express, { type Request, type Response } from "express";
-import prisma from "@workspace/db/client";
+import express, { NextFunction, type Request, type Response } from "express";
+import { errorhandler } from "./middleware";
+import authRouter from "./routes/auth"
 
 const app = express();
+
 app.use(express.json())
+app.use(errorhandler)
 
-app.get("/", (req : Request, res : Response) => {
-  res.json({ message: "Hello World" });
-});
+app.use("", authRouter)
 
-app.post("/signup", async (req : Request, res : Response) => {
-  const { username, password } = req.body;
-  const user = await prisma.user.create({
-    data: {
-      email: username,
-      password,
-    },
-  });
-  res.json({ message: "User signed up", user });
+app.get("/health", (req : Request, res : Response, next : NextFunction) => {
+  res.json({ message: "Server is up" });
 });
 
 app.listen(3001, () => {
