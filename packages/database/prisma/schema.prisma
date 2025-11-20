@@ -91,11 +91,14 @@ model Project {
   featureFlags FeatureFlag[]
 
   Company Company @relation(fields: [companyId], references: [id])
+
+  @@unique([name, companyId])
+  @@index([name, companyId])
 }
 
 model FeatureFlag {
   id      String  @id @default(uuid())
-  key     String  @unique
+  key     String
   enabled Boolean @default(false)
 
   createdAt DateTime @default(now())
@@ -104,6 +107,9 @@ model FeatureFlag {
   projectId String?
 
   Project Project? @relation(fields: [projectId], references: [id])
+
+  @@unique([key, projectId])
+  @@index([key, projectId])
 }
 
 // Uncomment the following model and add other necessary fields when implementing subscriptions

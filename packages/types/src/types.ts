@@ -37,6 +37,22 @@ export type UserSignIn = z.infer<typeof userSignInSchema>;
 export type UserSignUp = z.infer<typeof userSignUpSchema>;
 export type UserInvite = z.infer<typeof userInviteSchema>;
 
+export const featureFlagSchema = z.object({
+  id: z.string().uuid(),
+  key: z.string(),
+  enabled: z.boolean(),
+  projectId: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date()
+})
+
+export const createFeatureFlagScheam = featureFlagSchema.pick({
+  key: true,
+  projectId: true
+})
+
+export type FeatureFlag = z.infer<typeof featureFlagSchema>;
+export type CreateFeatureFlag = z.infer<typeof createFeatureFlagScheam>
 
 // Company Types
 export const companySchema = z.object({
@@ -56,3 +72,26 @@ export const createCompanySchema = companySchema.pick({
 
 export type Company = z.infer<typeof companySchema>;
 export type CreateCompany = z.infer<typeof createCompanySchema>;
+
+// Project Types
+
+export const projectSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string()
+    .min(1, "must be atleast of length 1")
+    .max(64, "Cannot be bigger than 64 characters"),
+  companyId: z.string().uuid(),
+  featureFlags: z.array(featureFlagSchema),
+  createdAt:  z.date(),
+  updatedAt: z.date()
+})
+
+export const createProjectSchema = projectSchema.pick({
+  name: true,
+  companyId: true
+})
+
+export type Project = z.infer<typeof projectSchema>;
+export type CreateProject = z.infer<typeof createProjectSchema> 
+
+//
