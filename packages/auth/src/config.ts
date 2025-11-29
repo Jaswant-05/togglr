@@ -13,12 +13,12 @@ export const config: NextAuthConfig = {
   providers: [
     Credentials({
       credentials : {
-        username: { label: "Username", type: "text", placeholder: "Email" } ,
+        email: { label: "email", type: "text", placeholder: "Email" } ,
         password: { label: "Password", type: "password" }
       },
       authorize: async (credentials) => {
         const { data, error} = userSignInSchema.safeParse({
-          email : credentials.username,
+          email : credentials.email,
           password : credentials.password
         })
 
@@ -54,7 +54,7 @@ export const config: NextAuthConfig = {
       return session;
     },
   },
-  // pages: {
-  //   signIn : "/login"
-  // }
+  pages: {
+    signIn : "/login"
+  }
 };

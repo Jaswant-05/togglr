@@ -5,7 +5,7 @@ import prisma, { Prisma } from "@workspace/db/client";
 import { UserInvite, userInviteSchema, UserSignUp, userSignUpSchema } from "@workspace/types/types";
 import bcrypt from "bcryptjs";
 
-export async function signIn(formData : UserSignUp){
+export async function signUp(formData : UserSignUp){
   const { data, error, success } = userSignUpSchema.safeParse(formData);
   if(!success){
     return ({
