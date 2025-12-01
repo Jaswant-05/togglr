@@ -1,3 +1,5 @@
+"use server"
+
 import { auth } from "@/auth";
 import prisma, { Prisma } from "@workspace/db/client";
 import { CreateProject, createProjectSchema } from "@workspace/types/types";

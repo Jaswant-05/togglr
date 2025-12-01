@@ -17,8 +17,11 @@ export async function getFeature(
   return featureFlag
 }
 
-export async function getAllFeatures(){
-  const featureFlags = await prisma.featureFlag.findMany();
-
+export async function getAllFeatures(projectId : string){
+  const featureFlags = await prisma.featureFlag.findMany({
+    where : {
+      projectId
+    }
+  });
   return featureFlags
 }

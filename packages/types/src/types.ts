@@ -67,7 +67,6 @@ export const companySchema = z.object({
 
 export const createCompanySchema = companySchema.pick({
   name: true,
-  ownerId: true
 })
 
 export type Company = z.infer<typeof companySchema>;

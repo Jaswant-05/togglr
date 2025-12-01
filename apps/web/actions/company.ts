@@ -33,7 +33,10 @@ export async function createCompany(formData: CreateCompany){
 
     // Create and return new company with session user as owner
     const company = await prisma.company.create({
-      data: data,
+      data: {
+        ownerId : userId,
+        name : data.name
+      },
     });
 
     return({

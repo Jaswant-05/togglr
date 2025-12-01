@@ -47,14 +47,23 @@ export const config: NextAuthConfig = {
     Apple
   ],
   callbacks:{
+    jwt({ token, user }) {
+      if (user) {
+        token.sub = user.id;
+      }
+      return token;
+    },
     session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id as string;
+        session.user.id = token.sub as string;
       }
       return session;
     },
   },
   pages: {
     signIn : "/login"
+  },
+  session : {
+    strategy : "jwt"
   }
 };
