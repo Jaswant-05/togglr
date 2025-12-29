@@ -3,66 +3,83 @@
 import { auth } from "@/auth";
 import prisma, { Prisma } from "@workspace/db/client";
 import { CreateFeatureFlag, createFeatureFlagScheam } from "@workspace/types/types";
+import axios from "axios";
 
-export async function createFeature(formData: CreateFeatureFlag){
+export async function createFeature(formData: CreateFeatureFlag) {
   // Zod Validation
   const { data, error, success } = createFeatureFlagScheam.safeParse(formData);
-  if(!success){
-    return({
+  if (!success) {
+    return ({
       success: false,
-      error : error.errors[0]?.message
+      error: error.errors[0]?.message
     })
-  }  
+  }
 
   // Try/catch to catch thrown errors
-  try{
+  try {
     const session = await auth();
-    if(!session || !session.user?.id){
+    if (!session || !session.user?.id) {
       throw new Error("Unauthorized");
     }
-    
+
     // Check if project with same company and name exists
     const existingFeature = await prisma.featureFlag.findUnique({
-      where : {
-        key_projectId : {
-          key : data.key,
+      where: {
+        key_projectId: {
+          key: data.key,
           projectId: data.projectId
         }
       }
     });
 
-    if(existingFeature){
+    if (existingFeature) {
       throw new Error("Project Already Exists");
     }
 
     // Create and return the new project
     const featureFlag = await prisma.featureFlag.create({ data });
 
-    return({
-      success : true,
-      data : featureFlag
+    return ({
+      success: true,
+      data: featureFlag
     })
-    
+
   }
-  catch(e){
-  // TODO: Error handling using classes fine for now.
-  if(e instanceof Error){
-    return({
-      success : false,
-      error : e.message
+  catch (e) {
+    // TODO: Error handling using classes fine for now.
+    if (e instanceof Error) {
+      return ({
+        success: false,
+        error: e.message
+      })
+    }
+    else if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      return ({
+        success: false,
+        error: e.message
+      })
+    }
+    else {
+      return ({
+        success: false,
+        error: "Unkown Error occured"
+      })
+    }
+  }
+}
+
+export async function updateFeature(projectId: string, featureId: string, enabled: boolean) {
+  const url = `http://localhost:3001/project/${projectId}/feature/${featureId}`;
+  console.log(url);
+  try{
+    console.log("inside try")
+    const response = await axios.put(url, {
+      enabled
     })
+    console.log(response)
   }
-  else if (e instanceof Prisma.PrismaClientKnownRequestError){
-    return({
-      success : false,
-      error : e.message
-    })
-  }
-  else{
-    return({
-      success : false,
-      error : "Unkown Error occured"
-    })
-  }
+  catch(e: any){
+    console.log("inside catch")
+    console.log(e.message);
   }
 }
